@@ -1,20 +1,45 @@
 import cv2 as cv
 import numpy as np
+import time
 
-cap=cv.VideoCapture(0)
+def iniciar_camara(index=0, width=640, height=480):
+    cap=cv.VideoCapture(index)
+    if not cap.isOpened():
+        raise RuntimeError("No se pudo abrir la cámara. Verifica el índice o los permisos.")
+    
+    cap.set(cv.CAP_PROP_FRAME_WIDTH, width)
+    cap.set(cv.CAP_PROP_FRAME_HEIGHT, height)
+    return cap
 
-while True:
-    ret,frame=cap.read()
+def mostrar_video(cap):
 
-    if ret==False:
-        continue
+    while True:
+        ret,frame=cap.read()
 
-    cv.imshow("video frame", frame)
+        if ret==False:
+            time.sleep(0.1)
+            continue
 
-    key_pressed = cv.waitKey(1) & 0xFF
+        cv.imshow("video frame", frame)
 
-    if key_pressed == ord('q'):
-        break
+        key_pressed = cv.waitKey(1) & 0xFF
 
-cap.release()
-cv.destroyAllWindows()
+        if key_pressed == ord('q'):
+            break
+        elif key_pressed == ord('s'):
+            timestamp = int(time.time())
+            cv.imwrite(f"capture_{timestamp}.png", frame)
+
+def liberar_camara(cap):    
+    cap.release()
+    cv.destroyAllWindows()
+
+def main():
+    cap=iniciar_camara()
+    try:
+        mostrar_video(cap)
+    finally:
+        liberar_camara(cap)
+
+if __name__=="__main__":
+    main()
