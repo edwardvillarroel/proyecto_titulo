@@ -1,14 +1,20 @@
 import cv2 as cv
 import numpy as np
-import sys
 
-img = cv.imread('image.jpg')
+cap=cv.VideoCapture(0)
 
-if img is None:
-    sys.exit("Could not read the image.")
- 
-cv.imshow("Display window", img)
-k = cv.waitKey(0)
- 
+while True:
+    ret,frame=cap.read()
 
+    if ret==False:
+        continue
 
+    cv.imshow("video frame", frame)
+
+    key_pressed = cv.waitKey(1) & 0xFF
+
+    if key_pressed == ord('q'):
+        break
+
+cap.release()
+cv.destroyAllWindows()
